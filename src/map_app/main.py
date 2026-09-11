@@ -4,19 +4,18 @@ import os
 from pathlib import Path
 from uuid import UUID
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from dotenv import load_dotenv
 
 from .failure import RandomFailurePolicy
 from .models import Marker, MarkerCreate, MarkerUpdate
 from .repository import MarkerRepository
 
-
 BASE_DIR = Path(__file__).resolve().parents[2]
 STATIC_DIR = BASE_DIR / "frontend"
-load_dotenv()
+load_dotenv(BASE_DIR / ".env")
 
 
 def create_app(
@@ -25,9 +24,13 @@ def create_app(
 ) -> FastAPI:
     app = FastAPI(title="Map Marker Editor API", version="0.1.0")
     app.state.repository = repository or MarkerRepository()
-    app.state.failure_policy = failure_policy or RandomFailurePolicy(
-        float(os.getenv("MARKER_FAILURE_RATE", "0.2"))
-    )
+    if failure_policy is None:
+        try:
+            failure_rate = float(os.getenv("MARKER_FAILURE_RATE", "0.2"))
+        except ValueError as exc:
+            raise RuntimeError("MARKER_FAILURE_RATE must be a number between 0 and 1") from exc
+        failure_policy = RandomFailurePolicy(failure_rate)
+    app.state.failure_policy = failure_policy
 
     @app.get("/api/health")
     def health() -> dict[str, str]:

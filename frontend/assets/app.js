@@ -125,7 +125,9 @@ function exportMarkers() {
   const payload = { version: 1, exportedAt: new Date().toISOString(), markers: [...state.values()].map(({ data }) => data) };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob); const anchor = document.createElement("a");
-  anchor.href = url; anchor.download = `pinboard-markers-${new Date().toISOString().slice(0, 10)}.json`; anchor.click(); URL.revokeObjectURL(url);
+  anchor.href = url; anchor.download = `pinboard-markers-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.append(anchor); anchor.click();
+  window.setTimeout(() => { URL.revokeObjectURL(url); anchor.remove(); }, 0);
   showToast("Markers exported", "success");
 }
 
@@ -161,7 +163,7 @@ async function initialize() {
     });
     map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
     map.on("click", (event) => {
-      if (event.originalEvent.target.closest(".mapboxgl-marker")) return;
+      if (event.originalEvent.target instanceof Element && event.originalEvent.target.closest(".mapboxgl-marker")) return;
       createMarker(event.lngLat);
     });
     map.on("load", loadMarkers);

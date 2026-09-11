@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<9", "httpx>=0.28,<1"]
+dev = ["pytest>=8,<9", "httpx>=0.28,<1", "ruff>=0.8,<1"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -22,6 +22,8 @@ include = ["map_app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = ["test_api.py"]
 pythonpath = ["src"]
-markers = []
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100

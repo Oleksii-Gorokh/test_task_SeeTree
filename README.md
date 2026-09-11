@@ -80,6 +80,7 @@ docker compose up --build
 ```powershell
 pytest -q
 python -m compileall -q src
+ruff check src tests
 ```
 
 Тести не викликають Mapbox або інші зовнішні сервіси: вони перевіряють API,

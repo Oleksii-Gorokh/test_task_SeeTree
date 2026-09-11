@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from map_app.failure import RandomFailurePolicy
@@ -46,6 +47,16 @@ def test_invalid_coordinates_and_score_are_rejected() -> None:
     assert client.post("/api/markers", json={"coordinates": {"lng": 30, "lat": 50}, "score": 6}).status_code == 422
 
 
+def test_empty_or_null_update_is_rejected_without_server_error() -> None:
+    client = make_client()
+    marker = client.post("/api/markers", json=marker_payload()).json()
+    marker_id = marker["id"]
+
+    assert client.patch(f"/api/markers/{marker_id}", json={}).status_code == 422
+    assert client.patch(f"/api/markers/{marker_id}", json={"score": None}).status_code == 422
+    assert client.get("/api/markers").json()[0] == marker
+
+
 def test_missing_marker_returns_404() -> None:
     client = make_client()
     missing = "00000000-0000-0000-0000-000000000001"
@@ -57,3 +68,15 @@ def test_frontend_is_served() -> None:
     response = make_client().get("/")
     assert response.status_code == 200
     assert "Pinboard" in response.text
+
+
+def test_health_and_runtime_config_endpoints() -> None:
+    client = make_client()
+    assert client.get("/api/health").json() == {"status": "ok"}
+    assert client.get("/api/config").status_code == 200
+
+
+def test_invalid_failure_rate_fails_fast(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("MARKER_FAILURE_RATE", "not-a-number")
+    with pytest.raises(RuntimeError, match="MARKER_FAILURE_RATE"):
+        create_app(MarkerRepository())
