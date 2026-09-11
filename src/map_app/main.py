@@ -7,6 +7,7 @@ from uuid import UUID
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
 
 from .failure import RandomFailurePolicy
 from .models import Marker, MarkerCreate, MarkerUpdate
@@ -15,6 +16,7 @@ from .repository import MarkerRepository
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 STATIC_DIR = BASE_DIR / "frontend"
+load_dotenv()
 
 
 def create_app(
@@ -30,6 +32,10 @@ def create_app(
     @app.get("/api/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    @app.get("/api/config")
+    def config() -> dict[str, str]:
+        return {"mapboxToken": os.getenv("MAPBOX_TOKEN", "")}
 
     @app.get("/api/markers", response_model=list[Marker])
     def list_markers(request: Request) -> list[Marker]:

@@ -26,11 +26,13 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
 $env:MARKER_FAILURE_RATE="0.2"
+$env:MAPBOX_TOKEN="your-mapbox-public-token"
 python -m map_app
 ```
 
-Відкрийте <http://localhost:8000>. Mapbox token для тестового завдання вже
-вказаний у `frontend/assets/app.js`.
+Відкрийте <http://localhost:8000>. Mapbox token передається в браузер через
+`MAPBOX_TOKEN`; для локальної розробки його можна покласти у некомітну `.env`
+файл. Публічний token з умови тестового завдання підходить для цього поля.
 
 `MARKER_FAILURE_RATE` — число від `0` до `1`; наприклад, `0` вимикає штучні
 збої, а `1` відхиляє кожне створення маркера. За замовчуванням використовується

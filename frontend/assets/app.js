@@ -11,15 +11,7 @@ const elements = {
   importInput: document.querySelector("#import-input"),
 };
 
-mapboxgl.accessToken = MAPBOX_TOKEN;
-const map = new mapboxgl.Map({
-  container: elements.map,
-  style: "mapbox://styles/mapbox/dark-v11",
-  center: [30.5234, 50.4501],
-  zoom: 10.5,
-  attributionControl: true,
-});
-map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
+let map;
 
 function showToast(message, type = "error") {
   const toast = document.createElement("div");
@@ -152,10 +144,32 @@ async function importMarkers(file) {
   elements.importInput.value = "";
 }
 
-map.on("click", (event) => {
-  if (event.originalEvent.target.closest(".mapboxgl-marker")) return;
-  createMarker(event.lngLat);
-});
-map.on("load", loadMarkers);
 document.querySelector("#export-button").addEventListener("click", exportMarkers);
 elements.importInput.addEventListener("change", (event) => { if (event.target.files[0]) importMarkers(event.target.files[0]); });
+
+async function initialize() {
+  try {
+    const { mapboxToken } = await request("/api/config");
+    if (!mapboxToken) throw new Error("MAPBOX_TOKEN is not configured");
+    mapboxgl.accessToken = mapboxToken;
+    map = new mapboxgl.Map({
+      container: elements.map,
+      style: "mapbox://styles/mapbox/dark-v11",
+      center: [30.5234, 50.4501],
+      zoom: 10.5,
+      attributionControl: true,
+    });
+    map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
+    map.on("click", (event) => {
+      if (event.originalEvent.target.closest(".mapboxgl-marker")) return;
+      createMarker(event.lngLat);
+    });
+    map.on("load", loadMarkers);
+  } catch (error) {
+    elements.loading.classList.add("hidden");
+    elements.connection.textContent = "Configuration error";
+    showToast(`Map unavailable: ${error.message}`);
+  }
+}
+
+initialize();
