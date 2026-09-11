@@ -63,10 +63,13 @@ Swagger-документація доступна за адресою `/docs`.
 
 ```powershell
 docker build -t pinboard .
-docker run --rm -p 8000:8000 -e MARKER_FAILURE_RATE=0.2 pinboard
+docker run --rm -p 8000:8000 `
+  -e MAPBOX_TOKEN="$env:MAPBOX_TOKEN" `
+  -e MARKER_FAILURE_RATE=0.2 pinboard
 ```
 
-Або через Compose:
+Для Compose покладіть `MAPBOX_TOKEN` у локальний `.env` або експортуйте його
+в оточення shell, а потім виконайте:
 
 ```powershell
 docker compose up --build

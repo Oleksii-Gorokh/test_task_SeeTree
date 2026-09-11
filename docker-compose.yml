@@ -4,4 +4,5 @@ services:
     ports:
       - "8000:8000"
     environment:
+      MAPBOX_TOKEN: ${MAPBOX_TOKEN}
       MARKER_FAILURE_RATE: ${MARKER_FAILURE_RATE:-0.2}
