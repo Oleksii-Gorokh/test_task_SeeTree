@@ -43,6 +43,7 @@ function markerElement(score) {
   const element = document.createElement("div");
   element.className = `marker-pin score-${score}`;
   element.setAttribute("aria-label", `Score ${score} marker`);
+  element.addEventListener("click", (event) => event.stopPropagation());
   return element;
 }
 
