@@ -1,0 +1,7 @@
+services:
+  pinboard:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      MARKER_FAILURE_RATE: ${MARKER_FAILURE_RATE:-0.2}
