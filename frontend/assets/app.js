@@ -43,7 +43,6 @@ function markerElement(score) {
   const element = document.createElement("div");
   element.className = `marker-pin score-${score}`;
   element.setAttribute("aria-label", `Score ${score} marker`);
-  element.addEventListener("click", (event) => event.stopPropagation());
   return element;
 }
 
@@ -153,7 +152,10 @@ async function importMarkers(file) {
   elements.importInput.value = "";
 }
 
-map.on("click", (event) => createMarker(event.lngLat));
+map.on("click", (event) => {
+  if (event.originalEvent.target.closest(".mapboxgl-marker")) return;
+  createMarker(event.lngLat);
+});
 map.on("load", loadMarkers);
 document.querySelector("#export-button").addEventListener("click", exportMarkers);
 elements.importInput.addEventListener("change", (event) => { if (event.target.files[0]) importMarkers(event.target.files[0]); });
