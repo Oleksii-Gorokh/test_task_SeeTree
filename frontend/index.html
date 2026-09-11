@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1220" />
+    <title>Pinboard · Map marker editor</title>
+    <link rel="preconnect" href="https://api.mapbox.com" />
+    <link rel="preconnect" href="https://events.mapbox.com" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet" />
+    <link href="/assets/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">✦</div>
+          <div>
+            <p class="eyebrow">MAP WORKSPACE</p>
+            <h1>Pinboard</h1>
+          </div>
+        </div>
+
+        <div class="intro-card">
+          <p class="eyebrow">QUICK START</p>
+          <p class="intro-copy">Click anywhere on the map to place a marker. Drag it to move, or open it to change its score.</p>
+        </div>
+
+        <section class="legend-section" aria-label="Marker score legend">
+          <div class="section-heading">
+            <h2>Score legend</h2>
+            <span class="muted">0—5</span>
+          </div>
+          <div class="legend-grid">
+            <div><span class="legend-dot score-5"></span>Five</div>
+            <div><span class="legend-dot score-4"></span>Four</div>
+            <div><span class="legend-dot score-3"></span>Three</div>
+            <div><span class="legend-dot score-2"></span>Two</div>
+            <div><span class="legend-dot score-1"></span>One</div>
+            <div><span class="legend-dot score-0"></span>Zero</div>
+          </div>
+        </section>
+
+        <div class="sidebar-actions">
+          <button class="button button-secondary" id="export-button" type="button">
+            <span>↓</span> Export JSON
+          </button>
+          <label class="button button-secondary" for="import-input">
+            <span>↑</span> Import JSON
+            <input id="import-input" type="file" accept="application/json,.json" hidden />
+          </label>
+        </div>
+
+        <p class="sidebar-footnote">Markers are stored in memory for this session.</p>
+      </aside>
+
+      <section class="map-area">
+        <div id="map" aria-label="Interactive marker map"></div>
+        <header class="map-toolbar">
+          <div>
+            <p class="eyebrow">LIVE MAP</p>
+            <p class="map-hint">Select a marker to edit it</p>
+          </div>
+          <div class="connection-status"><span class="status-dot"></span><span id="connection-label">Connected</span></div>
+        </header>
+        <section class="stats-card" aria-live="polite">
+          <div class="stats-title"><span>MARKER SUMMARY</span><span class="stats-total" id="total-count">0</span></div>
+          <div class="stats-list" id="stats-list"></div>
+        </section>
+        <div class="toast-region" id="toast-region" aria-live="assertive" aria-atomic="true"></div>
+        <div class="loading-state" id="loading-state"><span class="spinner"></span> Loading markers…</div>
+      </section>
+    </main>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <script type="module" src="/assets/app.js"></script>
+  </body>
+</html>
